@@ -10,14 +10,14 @@ const verifyToken = require('../verifyToken')
 //CREATE
 router.post("/create",verifyToken,async (req,res)=>{
     try{
-            console.log(req.body.estate)
+            
         const estate = await Estate.findById(req.body.estate)
-        console.log(estate)
+     
 
-        if (!estate) {
-          console.log(`Estate with name ${estateName} not found.`);
-          return null;
-        }
+        // if (!estate) {
+        //   console.log(`Estate with name ${estateName} not found.`);
+        //   return null;
+        // }
 
         const newApartment =new Apartment(req.body)
     
@@ -70,10 +70,10 @@ router.delete("/:id",verifyToken,async (req,res)=>{
 
 //GET aprtment
 router.get("/:id",async (req,res)=>{
-    console.log(req.params.id)
+    // console.log(req.params.id)
     try{
         const apartment =await Apartment.findById(req.params.id).populate('estate')
-        console.log(apartment)
+        // console.log(apartment)
         if(!apartment){
             throw Error
         }
