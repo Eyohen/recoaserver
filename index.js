@@ -31,13 +31,13 @@ const connectDB=async()=>{
 dotenv.config()
 app.use(express.json())
 app.use("/images",express.static(path.join(__dirname,"/images")))
-// app.use(cors({origin:["http://localhost:5173","http://localhost:5174"],
+app.use(cors({origin:["http://localhost:5173","http://localhost:5174"],
+credentials:true
+}))
+// app.use(cors({origin:"http://localhost:5173",
 // credentials:true
 // }))
-// app.use(cors({origin:"https://sore-jade-shrimp-boot.cyclic.app",
-// credentials:true
-// }))
-app.use(cors())
+// app.use(cors())
 app.use(cookieParser())
 app.use("/api/auth",authRoute)
 app.use("/api/users",userRoute)

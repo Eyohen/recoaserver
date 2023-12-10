@@ -59,7 +59,7 @@ router.delete("/:id",verifyToken,async (req,res)=>{
     try{
         await Apartment.findByIdAndDelete(req.params.id)
         // await Comment.deleteMany({postId:req.params.id})
-        res.status(200).json("Post has been deleted!")
+        res.status(200).json("Apartment has been deleted!")
 
     }
     catch(err){
