@@ -10,7 +10,7 @@ router.post("/register",async(req,res)=>{
     try{
         const {firstName,lastName,email,password}=req.body
         const salt=await bcrypt.genSalt(10)
-        const hashedPassword=await bcrypt.hashSync(password,salt)
+        const hashedPassword= await bcrypt.hashSync(password,salt)
         const newUser=new User({firstName,lastName,email,password:hashedPassword})
         const savedUser=await newUser.save()
         res.status(200).json(savedUser)
@@ -38,9 +38,9 @@ router.post("/login",async (req,res)=>{
             return res.status(401).json("Wrong credentials!")
         }
         // const token=jwt.sign({_id:user._id,name:user.name,email:user.email},process.env.SECRET,{expiresIn:"3d"})
-        const token=jwt.sign({_id:user._id,email:user.email},process.env.SECRET,{expiresIn:"3d"})
-        const {password,...info}=user._doc
-        res.cookie("token",token).status(200).json(info)
+        const token = jwt.sign({_id:user._id,email:user.email},process.env.SECRET,{expiresIn:"14d"})
+        const {password,...info} = user._doc
+        res.status(200).json({...info,access_token: token})
 
     }
     catch(err){
