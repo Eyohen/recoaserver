@@ -2,7 +2,7 @@ const express=require('express')
 const router=express.Router()
 const User=require('../models/User')
 const bcrypt=require('bcrypt')
-const Apartment=require('../models/Apartment')
+const Community =require('../models/Community')
 // const Comment=require('../models/Comment')
 const verifyToken = require('../verifyToken')
 

@@ -9,6 +9,7 @@ const UserSchema=new mongoose.Schema({
         type:String,
         required:true,  
     },
+    
     email:{
         type:String,
         required:true,
@@ -18,6 +19,11 @@ const UserSchema=new mongoose.Schema({
         type:String,
         required:true,
     },
+    role:{
+        type:String,
+        enum:['admin','tenant'],
+        default:'tenant'
+      }
   
 
 },{timestamps:true})
