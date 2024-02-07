@@ -1,5 +1,5 @@
 const { uploadtocloudinary, deleteFromCloudinary } = require('../middlewares/cloudinary');
-const { generateRandomString } = require('../stringGenerators');
+const { generateRandomString } = require('./stringGenerators');
 
 const uploadSingleFile = async (file) => {
     const fileBuffer = file.buffer;
