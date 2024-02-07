@@ -77,17 +77,19 @@ const DeleteCommunity = async (req,res)=>{
 const GetCommunity = async (req,res)=>{
     // console.log(req.params.id)
     try{
-        const Community =await Community.findById(req.params.id).populate('submarket').populate('unitTypes')
+        const foundCommunity =await Community.findById(req.params.id).populate('submarket').populate('unitTypes')
+        console.log(foundCommunity)
         // console.log(Community)
         if(!Community){
             res.status(404).json("Community not found!")
         }
         
-        res.status(200).json(Community)
+        res.status(200).json(foundCommunity)
 
     
     }
     catch(err){
+        console.log(err)
         res.status(500).json(err)
     }
 }
@@ -104,6 +106,7 @@ const SearchCommunity =  async (req,res)=>{
         res.status(200).json(Communitys)
     }
     catch(err){
+        console.log(err)
         res.status(500).json(err)
     }
 }
