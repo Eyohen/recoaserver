@@ -3,7 +3,6 @@ const app=express()
 const mongoose=require('mongoose')
 const dotenv=require('dotenv')
 const cors=require('cors')
-const multer=require('multer')
 const path=require("path")
 const cookieParser=require('cookie-parser')
 const authRoute=require('./routes/auth')
@@ -14,6 +13,7 @@ const bookingRoute=require('./routes/booking')
 const unitType = require('./routes/unitType')
 const tenantRoute=require('./routes/tenant')
 const { request } = require('http')
+const uploadFile= require('./middlewares/uploadMiddleware')
 // const commentRoute=require('./routes/comments')
 
 //database
@@ -50,26 +50,27 @@ app.use("/api/unittypes",unitType)
 app.use("/api/tenants",tenantRoute)
 // app.use("/api/comments",commentRoute)
 
-//image upload
-const storage=multer.diskStorage({
-    destination:(req,file,fn)=>{
-        console.log(file)
-        fn(null,"images")
-    },
-    filename:(req,file,fn)=>{
-        fn(null,req.body.img)
-        // fn(null,"image1.jpg")
+app.post("/api/upload",uploadFile.array("file"),async (req,res)=>{
+    if (req.files) {
+        console.log(req.files);
+        fileUrls = await uploadFiles(req);
     }
+    res.status(200).json("Image has been uploaded successfully!")
 })
 
-const upload=multer({storage:storage})
-app.post("/api/upload",upload.array("file"),(req,res)=>{
-console.log(req)
+// single file upload
+app.post("/api/upload/single",uploadFile.single("file"),async (req,res)=>{
+    if (req.file) {
+        console.log(req.file);
+        fileUrl = await uploadFile(req);
+    }
     res.status(200).json("Image has been uploaded successfully!")
 })
 
 
-app.listen(process.env.PORT,()=>{
-    connectDB()
-    console.log("app is running on port "+process.env.PORT)
-})
+// Connect to the database before starting the server
+connectDB().then(() => {
+    app.listen(process.env.PORT, () => {
+        console.log("app is running on port " + process.env.PORT);
+    });
+});
