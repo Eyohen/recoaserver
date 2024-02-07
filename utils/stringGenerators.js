@@ -10,8 +10,6 @@ const generateRandomString = (num) => {
     return retVal;
 };
 
-console.log(generateRandomString(40));
-
 const generateCode = (number) => {
     let code;
     if (number) {
