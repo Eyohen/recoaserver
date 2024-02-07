@@ -13,7 +13,8 @@ const bookingRoute=require('./routes/booking')
 const unitType = require('./routes/unitType')
 const tenantRoute=require('./routes/tenant')
 const { request } = require('http')
-const uploadFile= require('./middlewares/uploadMiddleware')
+const multerFile= require('./middlewares/uploadMiddleware')
+const {uploadFiles}= require('./utils/uploadService')
 // const commentRoute=require('./routes/comments')
 
 //database
@@ -50,22 +51,26 @@ app.use("/api/unittypes",unitType)
 app.use("/api/tenants",tenantRoute)
 // app.use("/api/comments",commentRoute)
 
-app.post("/api/upload",uploadFile.array("file"),async (req,res)=>{
+app.post("/api/upload",multerFile.array("file"),async (req,res)=>{
     if (req.files) {
         console.log(req.files);
         fileUrls = await uploadFiles(req);
+        console.log(fileUrls);
     }
-    res.status(200).json("Image has been uploaded successfully!")
+    res.status(200).json(
+        fileUrls
+    )
 })
 
-// single file upload
-app.post("/api/upload/single",uploadFile.single("file"),async (req,res)=>{
-    if (req.file) {
-        console.log(req.file);
-        fileUrl = await uploadFile(req);
-    }
-    res.status(200).json("Image has been uploaded successfully!")
-})
+// // single file upload
+// app.post("/api/upload/single",multerFile.single("file"),async (req,res)=>{
+//     if (req.file) {
+//         console.log(req.file);
+//         fileUrl = await uploadFiles(req);
+//         console.log(fileUrl);
+//     }
+//     res.status(200).json("Image has been uploaded successfully!")
+// })
 
 
 // Connect to the database before starting the server
