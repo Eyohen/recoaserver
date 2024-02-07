@@ -1,6 +1,6 @@
 const cloudinary = require('cloudinary').v2;
 require('dotenv').config();
-const sharp = require('sharp');
+// const sharp = require('sharp');
 
 cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
@@ -48,30 +48,30 @@ const deleteFromCloudinary = async (publicId) => {
     }
 };
 
-const uploadresizeToCloudinary = async (fileBuffer, details) => {
-    const image = sharp(fileBuffer);
-    const resizedImage = await image.resize({ width: 200, height: 200 }).toBuffer();
-    const options = {
-        use_filename: true,
-        folder: `EZcart/${details.user}/${details.folder}`,
-        public_id: details.name,
-    };
+// const uploadresizeToCloudinary = async (fileBuffer, details) => {
+//     // const image = sharp(fileBuffer);
+//     const resizedImage = await image.resize({ width: 200, height: 200 }).toBuffer();
+//     const options = {
+//         use_filename: true,
+//         folder: `EZcart/${details.user}/${details.folder}`,
+//         public_id: details.name,
+//     };
 
-    return new Promise((resolve, reject) => {
-        cloudinary.uploader
-            .upload_stream(options, (error, result) => {
-                if (error) {
-                    console.log(error);
-                    reject(error);
-                }
-                resolve({ message: 'success', url: result.secure_url });
-            })
-            .end(resizedImage);
-    });
-};
+//     return new Promise((resolve, reject) => {
+//         cloudinary.uploader
+//             .upload_stream(options, (error, result) => {
+//                 if (error) {
+//                     console.log(error);
+//                     reject(error);
+//                 }
+//                 resolve({ message: 'success', url: result.secure_url });
+//             })
+//             .end(resizedImage);
+//     });
+// };
 
 module.exports = {
     uploadtocloudinary,
-    uploadresizeToCloudinary,
+    // uploadresizeToCloudinary,
     deleteFromCloudinary,
 };
