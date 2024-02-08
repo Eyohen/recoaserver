@@ -35,4 +35,8 @@ const SubMarketSchema = new mongoose.Schema({
    
 },{timestamps:true})
 
+SubMarketSchema.pre('find', function () {
+    this.sort({ updatedAt: -1 });
+})
+
 module.exports=mongoose.model("SubMarket",SubMarketSchema)
