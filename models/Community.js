@@ -59,4 +59,9 @@ const CommunitySchema = new mongoose.Schema({
    
 },{timestamps:true})
 
+// sort by newest
+CommunitySchema.pre('find', function () {
+    this.sort({ updatedAt: -1 });
+})
+
 module.exports=mongoose.model("Community",CommunitySchema)
