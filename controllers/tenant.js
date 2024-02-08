@@ -1,22 +1,31 @@
-const express=require('express')
-const router=express.Router()
+const express = require('express')
+const router = express.Router()
 const Tenant = require('../models/Tenant')
-const bcrypt=require('bcrypt')
-const jwt=require('jsonwebtoken')
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 
 
 //REGISTER tenants
-const RegisterTenant = async(req,res)=>{
-    try{
-        const {tenant,email,password} = req.body
+const RegisterTenant = async (req, res) => {
+    try {
+        const { tenant, email, photo,phone,company, password } = req.body
         const salt = await bcrypt.genSalt(10)
-        const hashedPassword = await bcrypt.hashSync(password,salt)
-        const newTenant = new Tenant({tenant,email,password:hashedPassword})
+        const hashedPassword = await bcrypt.hashSync(password, salt)
+        const newTenant = new Tenant({ 
+            tenant, 
+            email, 
+            password: hashedPassword,
+            photo,
+            phone,
+            company
+        })
         const savedTenant = await newTenant.save()
-        res.status(200).json(savedTenant)
+        // exclude password field
+        const { password: removedPassword, ...info } = savedTenant._doc
+        res.status(200).json(info)
 
     }
-    catch(err){
+    catch (err) {
         console.log(err)
         res.status(500).json(err)
     }
@@ -25,25 +34,25 @@ const RegisterTenant = async(req,res)=>{
 
 
 //LOGIN tenants
-const LoginTenant = async (req,res)=>{
-    try{
-        const tenant =await Tenant.findOne({email:req.body.email})
-       
-        if(!tenant){
+const LoginTenant = async (req, res) => {
+    try {
+        const tenant = await Tenant.findOne({ email: req.body.email })
+
+        if (!tenant) {
             return res.status(404).json("Tenant not found!")
         }
-        const match=await bcrypt.compare(req.body.password,tenant.password)
-        
-        if(!match){
+        const match = await bcrypt.compare(req.body.password, tenant.password)
+
+        if (!match) {
             return res.status(401).json("Wrong credentials!")
         }
-        
-        const token = jwt.sign({_id:tenant._id,email:tenant.email},process.env.SECRET,{expiresIn:"14d"})
-        const {password,...info} = tenant._doc
-        res.status(200).json({...info,access_token: token})
+
+        const token = jwt.sign({ _id: tenant._id, email: tenant.email }, process.env.SECRET, { expiresIn: "14d" })
+        const { password, ...info } = tenant._doc
+        res.status(200).json({ ...info, access_token: token })
 
     }
-    catch(err){
+    catch (err) {
         res.status(500).json(err)
     }
 }
@@ -69,50 +78,47 @@ const LoginTenant = async (req,res)=>{
 
 
 //DELETE tenant
-const DeleteTenant = async (req,res)=>{
-    try{
+const DeleteTenant = async (req, res) => {
+    try {
         await Tenant.findByIdAndDelete(req.params.id)
         // await Apartment.deleteMany({userId:req.params.id})
         // await Comment.deleteMany({userId:req.params.id})
         res.status(200).json("Tenant has been deleted!")
 
     }
-    catch(err){
+    catch (err) {
         res.status(500).json(err)
     }
 }
 
 //GET tenantS
-const FindTenant = async (req,res)=>{
-    const query=req.query
-    
-    try{
-        const searchFilter={
-            title:{$regex:query.search, $options:"i"}
-        }
-        const tenants = await Tenant.find(query.search?searchFilter:null)
-        res.status(200).json(tenants)
+const FindTenant = async (req, res) => {
+    const query = req.query;
+
+    try {
+        const searchFilter = {
+            tenant: { $regex: query.search, $options: "i" } // Update the field to search
+        };
+        const tenants = await Tenant.find(query.search ? searchFilter : null).select('-password'); // Exclude password field
+        res.status(200).json(tenants);
+    } catch (err) {
+        res.status(500).json(err);
     }
-    catch(err){
-        res.status(500).json(err)
+};
+
+// GET Tenant
+const GetTenant = async (req, res) => {
+    try {
+        const user = await Tenant.findById(req.params.id).select('-password'); // Exclude password field
+        res.status(200).json(user);
+    } catch (err) {
+        res.status(500).json(err);
     }
-}
+};
 
 
-//GET Tenant
-const GetTenant = async (req,res)=>{
-    try{
-        const user= await Tenant.findById(req.params.id)
-        const {password,...info}=user._doc
-        res.status(200).json(info)
-    }
-    catch(err){
-        res.status(500).json(err)
-    }
-}
 
-
-module.exports={
+module.exports = {
     RegisterTenant,
     LoginTenant,
     DeleteTenant,
