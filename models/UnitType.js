@@ -66,7 +66,12 @@ UnitTypeSchema.virtual('availableUnits').get(function () {
     return this.total - reservedUnits;
 });
 
+UnitTypeSchema.pre('find', function () {
+    this.sort({ updatedAt: -1 });
+})
+
 // Apply the virtual toJSON transform to include virtual properties when calling toJSON
 UnitTypeSchema.set('toJSON', { virtuals: true });
+
 
 module.exports=mongoose.model("UnitType",UnitTypeSchema)
