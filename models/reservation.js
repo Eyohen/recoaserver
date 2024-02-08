@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
-const { UnitType } = require('./UnitType');
+const UnitType = require('./UnitType');
 
-const ReservationTypeSchema = new mongoose.Schema({
+const ReservationSchema = new mongoose.Schema({
 
     unitType: {
         type: mongoose.Schema.Types.ObjectId,
@@ -37,13 +37,14 @@ const checkAvailability = async (reservation) => {
         if (reservation.count > unitType.availableUnits) {
             throw new Error('Insufficient available units for reservation');
         }
+
     } catch (error) {
         throw error;
     }
 };
 
 // Pre-save hook to check availability before saving a reservation
-ReservationTypeSchema.pre('save', async function (next) {
+ReservationSchema.pre('save', async function (next) {
     try {
         await checkAvailability(this);
         next();
@@ -52,4 +53,4 @@ ReservationTypeSchema.pre('save', async function (next) {
     }
 });
 
-module.exports = mongoose.model("ReservationType", ReservationTypeSchema)
+module.exports = mongoose.model("Reservation", ReservationSchema)
