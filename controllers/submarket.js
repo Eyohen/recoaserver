@@ -54,7 +54,7 @@ const DeleteSubmarket = async (req,res)=>{
 //GET SubMarket DETAILS
 const GetSubmarketDetails = async (req,res)=>{
     try{
-        const subMarket =await SubMarket.findById(req.params.id).populate('communities')
+        const subMarket =await SubMarket.findById(req.params.id).populate('community')
         res.status(200).json(subMarket)
        
     }
@@ -71,7 +71,7 @@ const SearchSubmarket = async (req,res)=>{
         const searchFilter={
             title:{$regex:query.search, $options:"i"}
         }
-        const subMarket =await SubMarket.find(query.search?searchFilter:null).populate('communities')
+        const subMarket =await SubMarket.find(query.search?searchFilter:null).populate('community')
         res.status(200).json(subMarket)
     }
     catch(err){
