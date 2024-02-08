@@ -99,7 +99,7 @@ const FindTenant = async (req, res) => {
         const searchFilter = {
             tenant: { $regex: query.search, $options: "i" } // Update the field to search
         };
-        const tenants = await Tenant.find(query.search ? searchFilter : null).select('-password'); // Exclude password field
+        const tenants = await Tenant.find(query.search ? searchFilter : null).select('-password');
         res.status(200).json(tenants);
     } catch (err) {
         res.status(500).json(err);
