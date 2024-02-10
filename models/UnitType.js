@@ -60,18 +60,8 @@ const UnitTypeSchema = new mongoose.Schema({
    
 },{timestamps:true})
 
-// Virtual property to calculate available units
-UnitTypeSchema.virtual('availableUnits').get(function () {
-    const reservedUnits = this.reservations.reduce((total, reservation) => total + (reservation.count || 0), 0);
-    return this.total - reservedUnits;
-});
-
 UnitTypeSchema.pre('find', function () {
     this.sort({ updatedAt: -1 });
 })
-
-// Apply the virtual toJSON transform to include virtual properties when calling toJSON
-UnitTypeSchema.set('toJSON', { virtuals: true });
-
 
 module.exports=mongoose.model("UnitType",UnitTypeSchema)
