@@ -59,6 +59,7 @@ const getreservation = async (req, res) => {
                 .populate('unitType')
                 .populate('tenant');
         }
+        console.log(reservation);
         res.status(200).json(reservation);
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -95,7 +96,10 @@ const updateReservation = async (req, res) => {
         if (!unitType) {
             throw new Error('Unit type not found');
         }
-        unitType.numAvailable -= countDifference; // Update numAvailable based on count difference
+
+        // Adjust numAvailable based on count difference
+        unitType.numAvailable += countDifference;
+
         await unitType.save();
 
         res.status(200).json(updatedReservation);
@@ -119,6 +123,8 @@ const deleteReservation = async (req, res) => {
         if (!unitType) {
             throw new Error('Unit type not found');
         }
+
+        console.log(unitType);
         unitType.numAvailable += reservation.count; // Increase numAvailable by reservation count
         await unitType.save();
 
@@ -127,6 +133,7 @@ const deleteReservation = async (req, res) => {
 
         res.status(200).json({ message: 'Reservation deleted successfully' });
     } catch (error) {
+        console.error(error);
         res.status(400).json({ error: error.message });
     }
 };
