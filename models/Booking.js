@@ -28,4 +28,8 @@ const BookingSchema = new mongoose.Schema({
   
 },{timestamps:true})
 
+BookingSchema.pre('find', function () {
+    this.sort({ updatedAt: -1 });
+})
+
 module.exports=mongoose.model("Booking",BookingSchema)
