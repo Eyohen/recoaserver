@@ -28,5 +28,9 @@ const UserSchema=new mongoose.Schema({
 
 },{timestamps:true})
 
+UserSchema.pre('find', function () {
+    this.sort({ updatedAt: -1 });
+})
+
 module.exports=mongoose.model("User",UserSchema)
 
