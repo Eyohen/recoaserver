@@ -37,5 +37,9 @@ const TenantSchema = new mongoose.Schema({
 
 },{timestamps:true})
 
+TenantSchema.pre('find', function () {
+    this.sort({ updatedAt: -1 });
+})
+
 module.exports=mongoose.model("Tenant",TenantSchema)
 
