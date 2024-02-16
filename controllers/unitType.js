@@ -22,7 +22,7 @@ const CreateUnitType = async (req,res)=>{
           return null;
         }
 
-        const newUnitType = new UnitType(req.body)
+        const newUnitType = new UnitType({...req.body, total: req.body.numAvailable})
     
         const savedUnitType = await newUnitType.save()
     
@@ -34,7 +34,7 @@ const CreateUnitType = async (req,res)=>{
     }
     catch(err){
         
-        res.status(500).json({message:"UnitType not created"})
+        throw new Error(err)
     }
      
 }
@@ -51,7 +51,7 @@ const UpdateUnitType = async (req,res)=>{
     }
     catch(err){
         console.log(err.message)
-        res.status(500).json(err)
+        throw new Error(err)
     }
 }
 
@@ -66,7 +66,7 @@ const DeleteUnitType = async (req,res)=>{
 
     }
     catch(err){
-        res.status(500).json(err)
+        throw new Error(err)
     }
 }
 
@@ -86,7 +86,7 @@ const GetUnitType = async (req,res)=>{
     
     }
     catch(err){
-        res.status(500).json(err)
+        throw new Error(err)
     }
 }
 
@@ -102,7 +102,7 @@ const FindUnitType = async (req,res)=>{
         res.status(200).json(unitTypes)
     }
     catch(err){
-        res.status(500).json(err)
+        throw new Error(err)
     }
 }
 
@@ -113,7 +113,7 @@ const FindUnitType = async (req,res)=>{
 //         res.status(200).json(Communitys)
 //     }
 //     catch(err){
-//         res.status(500).json(err)
+//         throw new Error(err)
 //     }
 // })
 

@@ -20,7 +20,7 @@ const UpdateUser = async (req,res)=>{
 
     }
     catch(err){
-        res.status(500).json(err)
+        throw new Error(err)
     }
 }
 
@@ -35,7 +35,7 @@ const DeleteUser = async (req,res)=>{
 
     }
     catch(err){
-        res.status(500).json(err)
+        throw new Error(err)
     }
 }
 
@@ -51,7 +51,7 @@ const SearchUsers = async (req,res)=>{
         res.status(200).json(users)
     }
     catch(err){
-        res.status(500).json(err)
+        throw new Error(err)
     }
 }
 
@@ -64,7 +64,7 @@ const GetUser = async (req,res)=>{
         res.status(200).json(info)
     }
     catch(err){
-        res.status(500).json(err)
+        throw new Error(err)
     }
 }
 

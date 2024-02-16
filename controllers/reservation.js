@@ -27,7 +27,7 @@ const newReservation = async (req, res) => {
 
         res.status(201).json({ message: 'Reservation created successfully', reservation });
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        throw new Error(error)
     }
 };
 
@@ -45,7 +45,7 @@ const getReservations = async (req, res) => {
         console.log(reservations);
         res.status(200).json(reservations);
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        throw new Error(error)
     }
 };
 
@@ -62,7 +62,7 @@ const getreservation = async (req, res) => {
         console.log(reservation);
         res.status(200).json(reservation);
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        throw new Error(error)
     }
 };
 
@@ -104,7 +104,7 @@ const updateReservation = async (req, res) => {
 
         res.status(200).json(updatedReservation);
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        throw new Error(error)
     }
 };
 
@@ -134,7 +134,7 @@ const deleteReservation = async (req, res) => {
         res.status(200).json({ message: 'Reservation deleted successfully' });
     } catch (error) {
         console.error(error);
-        res.status(400).json({ error: error.message });
+        throw new Error(error)
     }
 };
 

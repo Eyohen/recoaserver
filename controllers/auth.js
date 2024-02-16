@@ -7,10 +7,13 @@ const jwt = require('jsonwebtoken')
 //REGISTER
 const Register = async (req, res) => {
     try {
-        const { firstName, lastName, email, password } = req.body
+        const { firstName, lastName, email, password, iam } = req.body
         const salt = await bcrypt.genSalt(10)
         const hashedPassword = await bcrypt.hashSync(password, salt)
-        const newUser = new User({ firstName, lastName, email, password: hashedPassword })
+        const newUser = new User({
+            firstName, lastName, email, password: hashedPassword, 
+            ...(iam === 'admin' ?  {role: iam} : {})
+        })
         const savedUser = await newUser.save()
         // Exclude password from the response
         const { password: removedPassword, ...userWithoutPassword } = savedUser._doc;
@@ -19,7 +22,7 @@ const Register = async (req, res) => {
     }
     catch (err) {
         console.log(err)
-        res.status(500).json(err)
+        throw new Error(err)
     }
 
 }
@@ -47,7 +50,7 @@ const AdminLogin = async (req, res) => {
 
     }
     catch (err) {
-        res.status(500).json(err)
+        throw new Error(err)
     }
 }
 
@@ -73,7 +76,7 @@ const Login = async (req, res) => {
 
     }
     catch (err) {
-        res.status(500).json(err)
+        throw new Error(err)
     }
 }
 
@@ -86,7 +89,7 @@ const LogoutWithCookies = async (req, res) => {
 
     }
     catch (err) {
-        res.status(500).json(err)
+        throw new Error(err)
     }
 }
 
@@ -131,7 +134,7 @@ const Logout = async (req, res) => {
         res.status(200).send("User logged out successfully!");
     } catch (err) {
         // Handle errors
-        res.status(500).json(err);
+        throw new Error(err);
     }
 };
 

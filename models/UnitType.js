@@ -41,7 +41,6 @@ const UnitTypeSchema = new mongoose.Schema({
     total:{
         type:Number,
         required:true
-
     },
     userId:{
         type:String,

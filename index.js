@@ -5,6 +5,7 @@ const dotenv=require('dotenv')
 const cors=require('cors')
 const path=require("path")
 const cookieParser=require('cookie-parser')
+const morgan=require('morgan')
 const authRoute=require('./routes/auth')
 const userRoute=require('./routes/users')
 const communityRoute=require('./routes/community')
@@ -16,6 +17,7 @@ const reservationRoute=require('./routes/reservation')
 const { request } = require('http')
 const multerFile= require('./middlewares/uploadMiddleware')
 const {uploadFiles}= require('./utils/uploadService')
+const Middlewares = require('./middlewares/errorhandler');
 // const commentRoute=require('./routes/comments')
 
 //database
@@ -41,8 +43,15 @@ app.use("/images",express.static(path.join(__dirname,"/images")))
 // app.use(cors({origin:["https://recoaproject.vercel.app","http://localhost:5173"],
 // credentials:true
 // }))
+// Request logger middleware
 app.use(cors() )
 app.use(cookieParser())
+app.use(morgan('dev'))
+app.use((req, res, next) => {
+    console.log(`Incoming request: ${req.method} || ${req.path} || ${req.ip} || ${req.hostname} || ${req.protocol} || ${req.originalUrl} || ${req.get('host')}`);
+    next();
+});
+
 app.use("/api/auth",authRoute)
 app.use("/api/users",userRoute)
 app.use("/api/communities",communityRoute)
@@ -74,6 +83,8 @@ app.post("/api/upload",multerFile.array("file"),async (req,res)=>{
 //     res.status(200).json("Image has been uploaded successfully!")
 // })
 
+app.use(Middlewares.notFound);
+app.use(Middlewares.errorHandler);
 
 // Connect to the database before starting the server
 connectDB().then(() => {

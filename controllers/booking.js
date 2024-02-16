@@ -19,7 +19,7 @@ const UpdateBooking = async (req,res)=>{
 
     }
     catch(err){
-        res.status(500).json(err)
+        throw new Error(err)
     }
 }
 
@@ -33,7 +33,7 @@ const DeleteBooking = async (req,res)=>{
 
     }
     catch(err){
-        res.status(500).json(err)
+        throw new Error(err)
     }
 }
 
@@ -46,7 +46,7 @@ const GetBooking = async (req,res)=>{
        
     }
     catch(err){
-        res.status(500).json(err)
+        throw new Error(err)
     }
 }
 
@@ -62,7 +62,7 @@ const SearchBookings = async (req,res)=>{
         res.status(200).json(booking)
     }
     catch(err){
-        res.status(500).json(err)
+        throw new Error(err)
     }
 }
 
@@ -73,7 +73,7 @@ const GetUserBooking = async (req,res)=>{
         res.status(200).json(booking)
     }
     catch(err){
-        res.status(500).json(err)
+        throw new Error(err)
     }
 }
 

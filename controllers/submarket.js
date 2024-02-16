@@ -18,7 +18,7 @@ const CreateSubmarket = async (req,res)=>{
     }
     catch(err){
         console.log(err.message)
-        res.status(500).json({message:"Submarket not created"})
+        throw new Error({message:"Submarket not created"})
     }
      
 }
@@ -32,7 +32,7 @@ const UpdateSubmarket = async (req,res)=>{
 
     }
     catch(err){
-        res.status(500).json(err)
+        throw new Error(err)
     }
 }
 
@@ -46,7 +46,7 @@ const DeleteSubmarket = async (req,res)=>{
 
     }
     catch(err){
-        res.status(500).json(err)
+        throw new Error(err)
     }
 }
 
@@ -54,28 +54,29 @@ const DeleteSubmarket = async (req,res)=>{
 //GET SubMarket DETAILS
 const GetSubmarketDetails = async (req,res)=>{
     try{
-        const subMarket =await SubMarket.findById(req.params.id).populate('community')
+        const subMarket =await SubMarket.findById(req.params.id).populate('communities')
         res.status(200).json(subMarket)
        
     }
     catch(err){
-        res.status(500).json(err)
+        throw new Error(err)
     }
 }
 
 //GET SubMarkets
 const SearchSubmarket = async (req,res)=>{
     const query=req.query
+    console.log("endpointhit")
     
     try{
         const searchFilter={
             title:{$regex:query.search, $options:"i"}
         }
-        const subMarket =await SubMarket.find(query.search?searchFilter:null).populate('community')
+        const subMarket =await SubMarket.find(query.search?searchFilter:null).populate('communities')
         res.status(200).json(subMarket)
     }
     catch(err){
-        res.status(500).json(err)
+        throw new Error(err)
     }
 }
 
@@ -86,7 +87,7 @@ const GetUserSubmarket = async (req,res)=>{
         res.status(200).json(subMarket)
     }
     catch(err){
-        res.status(500).json(err)
+        throw new Error(err)
     }
 }
 

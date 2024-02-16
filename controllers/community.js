@@ -34,7 +34,7 @@ const CreateCommunity = async (req, res) => {
     }
     catch (err) {
 
-        res.status(500).json({ message: "Community not created" })
+        throw new Error({ message: "Community not created" })
     }
 
 }
@@ -51,7 +51,7 @@ const UpdateCommunity = async (req, res) => {
     }
     catch (err) {
         console.log(err.message)
-        res.status(500).json(err)
+        throw new Error(err)
     }
 }
 
@@ -66,7 +66,7 @@ const DeleteCommunity = async (req, res) => {
 
     }
     catch (err) {
-        res.status(500).json(err)
+        throw new Error(err)
     }
 }
 
@@ -88,7 +88,7 @@ const GetCommunity = async (req, res) => {
     }
     catch (err) {
         console.log(err)
-        res.status(500).json(err)
+        throw new Error(err)
     }
 }
 
@@ -105,7 +105,7 @@ const SearchCommunity = async (req, res) => {
     }
     catch (err) {
         console.log(err)
-        res.status(500).json(err)
+        throw new Error(err)
     }
 }
 
@@ -116,7 +116,7 @@ const GetUserCommunity = async (req, res) => {
         res.status(200).json(Communitys)
     }
     catch (err) {
-        res.status(500).json(err)
+        throw new Error(err)
     }
 }
 

@@ -27,7 +27,7 @@ const RegisterTenant = async (req, res) => {
     }
     catch (err) {
         console.log(err)
-        res.status(500).json(err)
+        throw new Error(err)
     }
 
 }
@@ -53,7 +53,7 @@ const LoginTenant = async (req, res) => {
 
     }
     catch (err) {
-        res.status(500).json(err)
+        throw new Error(err)
     }
 }
 
@@ -72,7 +72,7 @@ const LoginTenant = async (req, res) => {
 
 //     }
 //     catch(err){
-//         res.status(500).json(err)
+//         throw new Error(err)
 //     }
 // })
 
@@ -87,7 +87,7 @@ const DeleteTenant = async (req, res) => {
 
     }
     catch (err) {
-        res.status(500).json(err)
+        throw new Error(err)
     }
 }
 
@@ -102,7 +102,7 @@ const FindTenant = async (req, res) => {
         const tenants = await Tenant.find(query.search ? searchFilter : null).select('-password');
         res.status(200).json(tenants);
     } catch (err) {
-        res.status(500).json(err);
+        throw new Error(err);
     }
 };
 
@@ -112,7 +112,7 @@ const GetTenant = async (req, res) => {
         const user = await Tenant.findById(req.params.id).select('-password'); // Exclude password field
         res.status(200).json(user);
     } catch (err) {
-        res.status(500).json(err);
+        throw new Error(err);
     }
 };
 

@@ -18,7 +18,7 @@ const storage = multer.memoryStorage(); // Store file in memory
 
 const uploadFile = multer({
     storage: storage,
-    limits: { fileSize: 1024 * 1024 * 50 }, // set max file size to 5MB
+    limits: { fileSize: 1024 * 1024 * 100 }, // set max file size to 5MB
     fileFilter: fileFilter,
 });
 
