@@ -48,7 +48,7 @@ const UnitTypeSchema = new mongoose.Schema({
     },
     reservations: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Reservations',
+        ref: 'Reservation',
         required: false
       }],
     community: {
