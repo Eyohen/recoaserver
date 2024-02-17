@@ -58,17 +58,24 @@ const UpdateUnitType = async (req,res)=>{
 
 
 //DELETE
-const DeleteUnitType = async (req,res)=>{
-    try{
-        await UnitType.findByIdAndDelete(req.params.id)
-        // await Comment.deleteMany({postId:req.params.id})
-        res.status(200).json({message:"Community has been deleted!"})
+const DeleteUnitType = async (req, res) => {
+    try {
+        const unitType = await UnitType.findById(req.params.id);
+        if (!unitType) {
+            return res.status(404).json({ message: "UnitType not found!" });
+        }
 
-    }
-    catch(err){
+        await Reservation.deleteMany({ _id: { $in: unitType.reservations } });
+
+        await UnitType.findByIdAndDelete(req.params.id);
+
+        res.status(200).json({ message: "UnitType and its associated reservations have been deleted!" });
+    } catch (err) {
+        console.log(err.message)
         throw new Error(err)
     }
-}
+};
+
 
 
 //GET UnitType
@@ -76,10 +83,6 @@ const GetUnitType = async (req,res)=>{
     // console.log(req.params.id)
     try{
         const unitType = await UnitType.findById(req.params.id).populate('community')
-        // console.log(Community)
-        // if(!Community){
-        //     throw Error
-        // }
         
         res.status(200).json(unitType)
 
@@ -98,25 +101,13 @@ const FindUnitType = async (req,res)=>{
         const searchFilter={
             title:{$regex:query.search, $options:"i"}
         }
-        const unitTypes = await UnitType.find(query.search?searchFilter:null).populate('community')
+        const unitTypes = await UnitType.find(query.search ? searchFilter : null).populate('community').populate('reservations');
         res.status(200).json(unitTypes)
     }
     catch(err){
         throw new Error(err)
     }
 }
-
-//GET USER POSTS
-// router.get("/user/:userId",async (req,res)=>{
-//     try{
-//         const Communitys =await Community.find({userId:req.params.userId})
-//         res.status(200).json(Communitys)
-//     }
-//     catch(err){
-//         throw new Error(err)
-//     }
-// })
-
 
 
 module.exports={
