@@ -99,7 +99,10 @@ const FindTenant = async (req, res) => {
         const searchFilter = {
             tenant: { $regex: query.search, $options: "i" } // Update the field to search
         };
-        const tenants = await Tenant.find(query.search ? searchFilter : null).select('-password');
+        const tenants = await Tenant.find(query.search ? searchFilter : null)
+            .select('-password')
+            .populate('reservations')
+            .exec();
         res.status(200).json(tenants);
     } catch (err) {
         throw new Error(err);
