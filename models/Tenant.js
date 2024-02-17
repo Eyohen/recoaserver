@@ -31,8 +31,9 @@ const TenantSchema = new mongoose.Schema({
     },
     reservations: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Reservation'
-      }],
+        ref: 'Reservation',
+        required: false
+    }],
   
 
 },{timestamps:true})
