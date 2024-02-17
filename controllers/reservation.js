@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Reservation = require('../models/Reservation');
 const UnitType = require('../models/UnitType');
+const Tenant = require('../models/Tenant');
 
 // Create a Reservation
 const newReservation = async (req, res) => {
@@ -21,9 +22,17 @@ const newReservation = async (req, res) => {
         if (!unitType) {
             throw new Error('Unit type not found');
         }
+
+        const tenant = await Tenant.findById(tenantId);
+        if (!tenant) {
+            throw new Error('Tenant not found');
+        }
         unitType.numAvailable -= count; // Reduce available units by count
         unitType.reservations.push(reservation._id); // Add reservation to the reservations array
         await unitType.save();
+
+        tenant.reservations.push(reservation._id); // Add reservation to the reservations array
+        await tenant.save();
 
         res.status(201).json({ message: 'Reservation created successfully', reservation });
     } catch (error) {
@@ -129,7 +138,7 @@ const deleteReservation = async (req, res) => {
         await unitType.save();
 
         // Delete reservation
-        await reservation.remove();
+        await Reservation.deleteOne({ _id: reservationId });
 
         res.status(200).json({ message: 'Reservation deleted successfully' });
     } catch (error) {
