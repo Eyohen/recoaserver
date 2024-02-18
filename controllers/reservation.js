@@ -13,7 +13,8 @@ const newReservation = async (req, res) => {
         const reservation = new Reservation({
             unitType: unitTypeId,
             tenant: tenantId,
-            count: count
+            count: count,
+            numAvailable: count
         });
         await reservation.save();
 
