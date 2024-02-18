@@ -14,8 +14,11 @@ const ReservationSchema = new mongoose.Schema({
     count: {
         type: Number,
         required: false
-    }
-
+    },
+    numAvailable: {
+        type: Number,
+        required: false,
+    },
 
 }, { timestamps: true })
 
