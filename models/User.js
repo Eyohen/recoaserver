@@ -9,21 +9,40 @@ const UserSchema=new mongoose.Schema({
         type:String,
         required:true,  
     },
-    
     email:{
         type:String,
         required:true,
         unique:true
     },
+    phone: {
+        type: String,
+        required: false,
+    },
     password:{
         type:String,
-        required:true,
+        required:false,
     },
     role:{
         type:String,
         enum:['admin','tenant'],
         default:'tenant'
-      }
+      },
+    tenant: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Tenant',
+        required: false
+    },
+    waitlists: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Waitlist'
+    }],
+    reservations: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Reservation',
+        required: false
+    }],
+
+
   
 
 },{timestamps:true})

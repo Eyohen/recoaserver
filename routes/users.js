@@ -6,6 +6,7 @@ const Community =require('../models/Community')
 // const Comment=require('../models/Comment')
 const verifyToken = require('../middlewares/verifyToken')
 const {
+    RegisterUser,
     UpdateUser,
     DeleteUser,
     GetUser,
@@ -13,9 +14,11 @@ const {
 } = require('../controllers/users')
 
 
+//Register
+router.post("/new",RegisterUser)
+
 //UPDATE
 router.put("/:id",verifyToken,UpdateUser)
-
 
 //DELETE
 router.delete("/:id",verifyToken,DeleteUser)

@@ -1,67 +1,75 @@
-const mongoose=require('mongoose')
+const mongoose = require('mongoose')
 const UnitType = require('./UnitType')
 
 const CommunitySchema = new mongoose.Schema({
-    name:{
-        type:String,
-        required:true,
-        unique:true
+    name: {
+        type: String,
+        required: true,
+        unique: true
     },
-    floorsAvailable:{
-        type:Number,
-        required:false,     
+    floorsAvailable: {
+        type: Number,
+        required: false,
     },
-    status:{
-        type:String,
-        required:false,
+    status: {
+        type: String,
+        required: false,
     },
-    bedroom:{
-        type:Number,
-        required:false,    
+    openingDate: {
+        type: String,
+        required: false,
     },
-    photo:{
-        type:String,
-        required:false,    
+    bedroom: {
+        type: Number,
+        required: false,
     },
-    type:{
-        type:String,
-        required:false,  
+    photo: {
+        type: String,
+        required: false,
     },
-    price:{
-        type:Number,
-        required:false,  
+    type: {
+        type: String,
+        required: false,
     },
-    size:{
-        type:Number,
-        required:false,  
+    price: {
+        type: Number,
+        required: false,
     },
-    bathroom:{
-        type:Number,
-        required:false,  
+    size: {
+        type: Number,
+        required: false,
     },
-    desc:{
-        type:String,
-       
+    bathroom: {
+        type: Number,
+        required: false,
     },
-    userId:{
-        type:String,
-        required:false, 
+    desc: {
+        type: String,
+
+    },
+    userId: {
+        type: String,
+        required: false,
     },
     submarket: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'SubMarket',
         required: true
-      },
+    },
     unitTypes: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'UnitType'
-      }],
-   
-},{timestamps:true})
+    }],
+    waitlists: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Waitlist'
+    }],
+
+}, { timestamps: true })
 
 // sort by newest
 CommunitySchema.pre('find', function () {
     this.sort({ updatedAt: -1 });
 })
 
-module.exports=mongoose.model("Community",CommunitySchema)
+module.exports = mongoose.model("Community", CommunitySchema)

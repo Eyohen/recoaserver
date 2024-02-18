@@ -36,7 +36,6 @@ const UnitTypeSchema = new mongoose.Schema({
     desc:{
         type:String,
         required:false,
-       
     },
     total:{
         type:Number,
