@@ -3,10 +3,39 @@ const router=express.Router()
 const User=require('../models/User')
 const bcrypt=require('bcrypt')
 const Community =require('../models/Community')
+const Tenant = require('../models/Tenant')
 // const Comment=require('../models/Comment')
 const verifyToken = require('../middlewares/verifyToken')
 
+const RegisterUser = async (req, res) => {
+    try {
+        const { firstName, lastName, email, password, phone, tenantId } = req.body
+        const tenant = await Tenant.findById(tenantId)
 
+        if (!tenant) {
+            return res.status(404).json("Tenant not found!")
+        }
+       const match = await bcrypt.compare(password, tenant.password)
+
+        if (!match) {
+            return res.status(401).json("Wrong credentials!")
+        }
+        const newUser = new User({
+            firstName, lastName, email, password: tenant.password, phone,
+            role: 'tenant'
+        })
+        const savedUser = await newUser.save()
+        // Exclude password from the response
+        const { password: removedPassword, ...userWithoutPassword } = savedUser._doc;
+        res.status(200).json(userWithoutPassword);
+
+    }
+    catch (err) {
+        console.log(err)
+        throw new Error(err)
+    }
+
+}
 //UPDATE
 const UpdateUser = async (req,res)=>{
     try{
@@ -70,6 +99,7 @@ const GetUser = async (req,res)=>{
 
 
 module.exports={
+    RegisterUser,
     UpdateUser,
     DeleteUser,
     SearchUsers,
