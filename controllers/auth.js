@@ -11,8 +11,8 @@ const Register = async (req, res) => {
         const salt = await bcrypt.genSalt(10)
         const hashedPassword = await bcrypt.hashSync(password, salt)
         const newUser = new User({
-            firstName, lastName, email, password: hashedPassword, 
-            ...(iam === 'admin' ?  {role: iam} : {})
+            firstName, lastName, email, password: hashedPassword,
+            ...(iam === 'admin' ? { role: iam } : {})
         })
         const savedUser = await newUser.save()
         // Exclude password from the response
@@ -59,12 +59,12 @@ const AdminLogin = async (req, res) => {
 //LOGIN
 const Login = async (req, res) => {
     try {
-        const user = await User.findOne({ email: req.body.email })
+        const user = await User.findOne({ email: req.body.email }).populate('tenant')
 
         if (!user) {
             return res.status(404).json("User not found!")
         }
-        const match = await bcrypt.compare(req.body.password, user.password)
+        const match = await bcrypt.compare(req.body.password, user.tenant.password)
 
         if (!match) {
             return res.status(401).json("Wrong credentials!")
