@@ -21,7 +21,7 @@ const CreateUnitType = async (req,res)=>{
           res.status(404).json({ message: "Community not found" });
           return null;
         }
-
+        console.log(req.body)
         const newUnitType = new UnitType({...req.body, total: req.body.numAvailable})
     
         const savedUnitType = await newUnitType.save()
