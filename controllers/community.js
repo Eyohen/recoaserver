@@ -11,6 +11,7 @@ const SubMarket = require('../models/SubMarket')
 const CreateCommunity = async (req, res) => {
     try {
 
+        console.log(req.body)
         const submarket = await SubMarket.findById(req.body.submarket)
 
 
@@ -18,7 +19,6 @@ const CreateCommunity = async (req, res) => {
             res.status(404).json({ message: "Submarket not found" });
             return null;
         }
-
         const newCommunity = new Community(req.body)
 
         const savedCommunity = await newCommunity.save()
