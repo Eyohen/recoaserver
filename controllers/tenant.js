@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const Tenant = require('../models/Tenant')
+const User = require('../models/User')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
@@ -36,7 +37,7 @@ const RegisterTenant = async (req, res) => {
 //LOGIN tenants
 const LoginTenant = async (req, res) => {
     try {
-        const tenant = await Tenant.findOne({ email: req.body.email })
+        const tenant = await User.findOne({ email: req.body.email })
 
         if (!tenant) {
             return res.status(404).json("Tenant not found!")
