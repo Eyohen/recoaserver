@@ -6,6 +6,8 @@ const Community = require('../models/Community')
 // const Comment=require('../models/Comment')
 const verifyToken = require('../middlewares/verifyToken')
 const SubMarket = require('../models/SubMarket')
+const Tenant = require('../models/Tenant')
+const Reservation = require('../models/Reservation')
 
 //CREATE
 const CreateCommunity = async (req, res) => {
@@ -120,6 +122,25 @@ const GetUserCommunity = async (req, res) => {
     }
 }
 
+const getTenantReservedCommunities = async (req, res) => {
+    try {
+        const tenantId = req.params.id;
+
+        const reservations = await Reservation.find({ tenant: tenantId }).populate('unitType');
+
+        const unitTypeIds = reservations.map(reservation => reservation.unitType._id);
+
+        const uniqueUnitTypeIds = [...new Set(unitTypeIds)];
+
+        const communities = await Community.find({
+            'unitTypes': { $in: uniqueUnitTypeIds }
+        }).populate('submarket');
+        // Return the communities
+        res.json(communities);
+    } catch (error) {
+        throw new Error(error)
+    }
+}
 
 
 module.exports = {
@@ -128,7 +149,8 @@ module.exports = {
     DeleteCommunity,
     GetCommunity,
     SearchCommunity,
-    GetUserCommunity
+    GetUserCommunity,
+    getTenantReservedCommunities
 }
 
 
