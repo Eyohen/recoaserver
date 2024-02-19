@@ -33,7 +33,7 @@ const checkAvailability = async (userreservation) => {
         }
 
         // Check if the count being reserved is enough
-        if (reservation.count > reservation.numAvailable) {
+        if (userreservation.count > reservation.numAvailable) {
             throw new Error('Insufficient available units for reservation');
         }
 
