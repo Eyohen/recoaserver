@@ -30,6 +30,10 @@ const CreateWaitlist = async (req, res) => {
             console.log(userFields)
             user = new User(userFields);
             await user.save();
+
+            if (tenantId) {
+                await Tenant.findByIdAndUpdate (tenantId, { $push: { users: user._id } });
+            }
         }
 
         const community = await Community.findById(communityId);
