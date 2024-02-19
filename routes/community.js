@@ -6,7 +6,8 @@ const {
     DeleteCommunity,
     GetCommunity,
     SearchCommunity,
-    GetUserCommunity
+    GetUserCommunity,
+    getTenantReservedCommunities
 } = require('../controllers/community')
 // const Comment=require('../models/Comment')
 const verifyToken = require('../middlewares/verifyToken')
@@ -28,6 +29,9 @@ router.get("/", SearchCommunity)
 
 //GET USER POSTS
 router.get("/user/:userId",GetUserCommunity)
+
+//Get tenant reserved communities
+router.get("/tenant/:id",getTenantReservedCommunities)
 
 
 
