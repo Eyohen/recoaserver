@@ -68,11 +68,12 @@ const getReservations = async (req, res) => {
 // Get a Reservation by ID
 const getreservation = async (req, res) => {
     try {
-        const reservation = await Reservation.findById(req.params.id);
+        const reservation = await Reservation.findById(req.params.id)
+            .populate('unitType')
+            .populate('tenant');
+
         if (!reservation) {
             return res.status(404).json({ error: 'Reservation not found' })
-                .populate('unitType')
-                .populate('tenant');
         }
         console.log(reservation);
         res.status(200).json(reservation);
