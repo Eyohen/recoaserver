@@ -9,20 +9,6 @@ const newReservation = async (req, res) => {
     try {
         const { unitTypeId, tenantId, count } = req.body;
 
-        const existingReservation = await Reservation.findOne({ unitType: unitTypeId, tenant: tenantId });
-        if (existingReservation) {
-            return res.status(400).json({ error: 'Reservation already exists' });
-        }
-
-        // Create reservation
-        const reservation = new Reservation({
-            unitType: unitTypeId,
-            tenant: tenantId,
-            count: count,
-            numAvailable: count
-        });
-        await reservation.save();
-
         // Update numAvailable in UnitType model
         const unitType = await UnitType.findById(unitTypeId);
         if (!unitType) {
@@ -33,14 +19,31 @@ const newReservation = async (req, res) => {
         if (!tenant) {
             throw new Error('Tenant not found');
         }
-        unitType.numAvailable -= count; // Reduce available units by count
-        unitType.reservations.push(reservation._id); // Add reservation to the reservations array
+
+        let existingReservation = await Reservation.findOne({ unitType: unitTypeId, tenant: tenantId });
+        if (existingReservation) {
+            existingReservation.count += count;
+            existingReservation.numAvailable += count;
+            await existingReservation.save();
+        } else {
+            // Create reservation
+            existingReservation = new Reservation({
+                unitType: unitTypeId,
+                tenant: tenantId,
+                count: count,
+                numAvailable: count
+            });
+            await reservation.save();
+            unitType.reservations.push(reservation._id);
+        }
+
+        unitType.numAvailable -= count; 
         await unitType.save();
 
-        tenant.reservations.push(reservation._id); // Add reservation to the reservations array
+        tenant.reservations.push(reservation._id); 
         await tenant.save();
 
-        res.status(201).json({ message: 'Reservation created successfully', reservation });
+        res.status(201).json({ message: 'Reservation created successfully', reservation: existingReservation });
     } catch (error) {
         throw new Error(error)
     }
