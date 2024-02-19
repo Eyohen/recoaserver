@@ -19,6 +19,11 @@ const ReservationSchema = new mongoose.Schema({
         type: Number,
         required: false,
     },
+    userreservations: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'UserReservation',
+        required: false
+    }],
 
 }, { timestamps: true })
 
