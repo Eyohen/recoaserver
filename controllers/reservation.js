@@ -9,6 +9,11 @@ const newReservation = async (req, res) => {
     try {
         const { unitTypeId, tenantId, count } = req.body;
 
+        const existingReservation = await Reservation.findOne({ unitType: unitTypeId, tenant: tenantId });
+        if (existingReservation) {
+            return res.status(400).json({ error: 'Reservation already exists' });
+        }
+
         // Create reservation
         const reservation = new Reservation({
             unitType: unitTypeId,
