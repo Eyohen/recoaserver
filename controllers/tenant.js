@@ -50,6 +50,10 @@ const LoginTenant = async (req, res) => {
 
         const token = jwt.sign({ _id: tenant._id, email: tenant.email }, process.env.SECRET, { expiresIn: "14d" })
         const { password, ...info } = tenant._doc
+        if (tenant.tenant) {
+            const tenantInfo = await Tenant.findById(tenant.tenant)
+            info.tenantInfo = tenantInfo
+        }
         res.status(200).json({ ...info, access_token: token })
 
     }
