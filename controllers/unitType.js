@@ -82,7 +82,7 @@ const DeleteUnitType = async (req, res) => {
 const GetUnitType = async (req,res)=>{
     // console.log(req.params.id)
     try{
-        const unitType = await UnitType.findById(req.params.id).populate('community')
+        const unitType = await UnitType.findById(req.params.id).populate('community').populate('reservations');
         
         res.status(200).json(unitType)
 
