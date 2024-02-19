@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const User = require('../models/User')
 const bcrypt = require('bcrypt')
+const mongoose = require('mongoose')
 const Community = require('../models/Community')
 // const Comment=require('../models/Comment')
 const verifyToken = require('../middlewares/verifyToken')
@@ -96,13 +97,30 @@ const GetCommunity = async (req, res) => {
 
 //GET Communitys
 const SearchCommunity = async (req, res) => {
-    const query = req.query
+    const { submarketId, search } = req.query;
 
     try {
-        const searchFilter = {
-            title: { $regex: query.search, $options: "i" }
+        // Validate the submarketId if provided
+        if (submarketId && !mongoose.Types.ObjectId.isValid(submarketId)) {
+            return res.status(400).json({ message: 'Invalid Submarket ID' });
         }
-        const Communitys = await Community.find(query.search ? searchFilter : null).populate('submarket').populate('unitTypes')
+
+        let searchFilter = {};
+
+        // Add submarket filter if submarketId is provided
+        if (submarketId) {
+            searchFilter.submarket = submarketId;
+        }
+
+        // Add search term filter if search query is provided
+        if (search) {
+            searchFilter.$or = [
+                { name: { $regex: search, $options: "i" } },
+                // You can add more fields to search by here, e.g., description
+                // { 'description': { $regex: search, $options: "i" } }
+            ];
+        }
+        const Communitys = await Community.find(searchFilter).populate('submarket').populate('unitTypes')
         res.status(200).json(Communitys)
     }
     catch (err) {
