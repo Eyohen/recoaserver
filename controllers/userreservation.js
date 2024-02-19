@@ -8,28 +8,41 @@ const User = require('../models/User');
 const unewReservation = async (req, res) => {
     try {
         const { reservationId, userId, count } = req.body;
-
-        // Create reservation
-        const userreservation = new UserReservation({
-            reservation: reservationId,
-            user: userId,
-            count: count,
-            numAvailable: count
-        });
-        await reservation.save();
-
+        console.log(req.body);
         // Update numAvailable in Reservation model
         const reservation = await Reservation.findById(reservationId);
         if (!reservation) {
-            throw new Error('Reservation not found');
+            res.status(404).json({ error: 'Reservation not found' });
         }
 
         const user = await User.findById(userId);
         if (!user) {
-            throw new Error('Tenant not found');
+            res.status(404).json({ error: 'User not found' });
         }
+        // First, try to find an existing reservation for this user and reservationId
+        let userreservation = await UserReservation.findOne({
+            reservation: reservationId,
+            user: userId
+        });
+
+        if (userreservation) {
+            // If an existing reservation is found, increment the count and numAvailable
+            userreservation.count += count;
+            userreservation.numAvailable += count; // Adjust this logic if numAvailable is meant to behave differently
+            await userreservation.save();
+        } else {
+            // If no existing reservation is found, create a new one
+            userreservation = new UserReservation({
+                reservation: reservationId,
+                user: userId,
+                count: count,
+                numAvailable: count
+            });
+            await userreservation.save();
+            reservation.userreservations.push(reservation._id); // Add reservation to the reservations array
+        }
+
         reservation.numAvailable -= count; // Reduce available units by count
-        reservation.reservations.push(reservation._id); // Add reservation to the reservations array
         await reservation.save();
 
         user.reservations.push(reservation._id); // Add reservation to the reservations array
