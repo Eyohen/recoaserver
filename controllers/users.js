@@ -12,6 +12,11 @@ const RegisterUser = async (req, res) => {
         const { firstName, lastName, email, password, phone, tenantId } = req.body
         const tenant = await Tenant.findById(tenantId)
 
+        const checkEmail = await User.findOne({ email })
+        if (checkEmail) {
+            return res.status(400).json("Email already exists!")
+        }
+
         if (!tenant) {
             return res.status(404).json("Tenant not found!")
         }
@@ -22,16 +27,21 @@ const RegisterUser = async (req, res) => {
         }
         const newUser = new User({
             firstName, lastName, email, password: tenant.password, phone,
-            role: 'tenant'
+            role: 'tenant',
+            tenant: tenantId
         })
         const savedUser = await newUser.save()
+
+        // add the user to the tenant
+        tenant.users.push(savedUser._id)
+        await tenant.save()
         // Exclude password from the response
         const { password: removedPassword, ...userWithoutPassword } = savedUser._doc;
         res.status(200).json(userWithoutPassword);
 
     }
     catch (err) {
-        //console.log(err)
+        console.log(err)
         return res.status(500).json(err.message)    }
 
 }
@@ -74,6 +84,7 @@ const SearchUsers = async (req,res)=>{
             title:{$regex:query.search, $options:"i"}
         }
         const users = await User.find(query.search?searchFilter:null)
+        .populate('tenant')
         res.status(200).json(users)
     }
     catch(err){

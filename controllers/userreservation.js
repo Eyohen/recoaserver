@@ -70,8 +70,10 @@ const ugetReservations = async (req, res) => {
             title: { $regex: query.search, $options: "i" }
         };
         const reservations = await UserReservation.find(query.search ? searchFilter : null)
-            .populate('reservation')
-            .populate('user');
+            .populate({
+                path: 'reservation',
+                populate: { path: 'tenant unitType' }
+            })            .populate('user');
         //console.log(reservations);
         res.status(200).json(reservations);
     } catch (error) {
