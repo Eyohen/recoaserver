@@ -57,6 +57,7 @@ const unewReservation = async (req, res) => {
 
         res.status(201).json({ message: 'Reservation created successfully', userreservation });
     } catch (error) {
+        console.log(error)
         return res.status(500).json(error.message)    }
 };
 
