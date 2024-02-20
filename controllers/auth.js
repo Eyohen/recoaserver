@@ -1,5 +1,11 @@
 const express = require('express')
 const User = require('../models/User')
+const Community = require('../models/Community')
+const Submarket = require('../models/SubMarket')
+const UnitType = require('../models/UnitType')
+const Reservation = require('../models/Reservation')
+const Tenant = require('../models/Tenant')
+const UserReservation = require('../models/UserReservation')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
@@ -52,7 +58,42 @@ const AdminLogin = async (req, res) => {
         return res.status(500).json(err.message)    }
 }
 
+// Fetch stats
+const fetchStats = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json("User not found!");
+        }
+        if (user.role !== "admin") {
+            return res.status(401).json({ message: "Not Admin" });
+        }
 
+        // Use .countDocuments() for accurate count based on documents' content
+        const tenantCount = await Tenant.countDocuments();
+        const userCount = await User.countDocuments();
+        const submarketCount = await Submarket.countDocuments();
+        const communityCount = await Community.countDocuments();
+        const unitCount = await UnitType.countDocuments();
+        const reservationCount = await Reservation.countDocuments();
+        const userReservationCount = await UserReservation.countDocuments();
+
+        res.status(200).json({
+            tenantCount,
+            userCount,
+            submarketCount,
+            communityCount,
+            unitCount,
+            reservationCount,
+            userReservationCount
+        });
+
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json(err.message);
+    }
+}
 
 //LOGIN
 const Login = async (req, res) => {
@@ -142,5 +183,6 @@ module.exports = {
     LogoutWithCookies,
     Refetch,
     Logout,
+    fetchStats,
     AdminLogin
 }
