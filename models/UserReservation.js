@@ -24,17 +24,17 @@ const checkAvailability = async (userreservation) => {
         // Find the unit type associated with the reservation
         const reservation = await Reservation.findById(userreservation.reservation);
         if (!reservation) {
-            throw new Error('Reservation not found');
+            return res.status(400).json('Reservation not found');
         }
 
         // Check if there are available units
         if (reservation.numAvailable <= 0) {
-            throw new Error('No available units for reservation');
+            return res.status(400).json('No available units for reservation');
         }
 
         // Check if the count being reserved is enough
         if (userreservation.count > reservation.numAvailable) {
-            throw new Error('Insufficient available units for reservation');
+            return res.status(400).json('Insufficient available units for reservation');
         }
 
     } catch (error) {

@@ -31,9 +31,8 @@ const RegisterUser = async (req, res) => {
 
     }
     catch (err) {
-        console.log(err)
-        throw new Error(err)
-    }
+        //console.log(err)
+        return res.status(500).json(err.message)    }
 
 }
 //UPDATE
@@ -43,14 +42,13 @@ const UpdateUser = async (req,res)=>{
             const salt = await bcrypt.genSalt(10)
             req.body.password = await bcrypt.hashSync(req.body.password,salt)
         }
-        console.log(req.body)
+        //console.log(req.body)
         const updatedUser=await User.findByIdAndUpdate(req.params.id,{$set:req.body},{new:true})
         res.status(200).json(updatedUser)
 
     }
     catch(err){
-        throw new Error(err)
-    }
+        return res.status(500).json(err.message)    }
 }
 
 
@@ -64,8 +62,7 @@ const DeleteUser = async (req,res)=>{
 
     }
     catch(err){
-        throw new Error(err)
-    }
+        return res.status(500).json(err.message)    }
 }
 
 //GET USERS
@@ -80,8 +77,7 @@ const SearchUsers = async (req,res)=>{
         res.status(200).json(users)
     }
     catch(err){
-        throw new Error(err)
-    }
+        return res.status(500).json(err.message)    }
 }
 
 
@@ -93,8 +89,7 @@ const GetUser = async (req,res)=>{
         res.status(200).json(info)
     }
     catch(err){
-        throw new Error(err)
-    }
+        return res.status(500).json(err.message)    }
 }
 
 

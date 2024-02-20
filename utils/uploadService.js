@@ -10,7 +10,7 @@ const uploadSingleFile = async (file) => {
 
     const uploadresult = await uploadtocloudinary(fileBuffer, details);
     if (uploadresult.message === 'error') {
-        throw new Error(uploadresult.error.message);
+        return res.status(400).json(uploadresult.error.message);
     }
     if (uploadresult.message === 'success') {
         return uploadresult.url;
@@ -24,7 +24,7 @@ const uploadFiles = async (req) => {
     const results = await Promise.all(uploadPromises);
 
     if (results.length === 0) {
-        throw new Error(`Error uploading files to cloudinary`);
+        return res.status(400).json(`Error uploading files to cloudinary`);
     }
 
     return results;
@@ -32,14 +32,14 @@ const uploadFiles = async (req) => {
 
 const deleteFiles = async (urls) => {
     if (!urls || !urls.length) {
-        throw new Error('No URLs found for deletion');
+        return res.status(400).json('No URLs found for deletion');
     }
 
     const deletePromises = urls.map((url) => deleteFromCloudinary(url));
     const results = await Promise.all(deletePromises);
 
     if (results.length === 0) {
-        throw new Error(`Error deleting files from cloudinary`);
+        return res.status(400).json(`Error deleting files from cloudinary`);
     }
 
     return results;

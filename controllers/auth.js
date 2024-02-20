@@ -21,9 +21,8 @@ const Register = async (req, res) => {
 
     }
     catch (err) {
-        console.log(err)
-        throw new Error(err)
-    }
+        //console.log(err)
+        return res.status(500).json(err.message)    }
 
 }
 
@@ -38,7 +37,7 @@ const AdminLogin = async (req, res) => {
         if (user.role !== "admin") {
             return res.status(401).json({ message: "Not Admin" })
         }
-        const match = await bcrypt.compare(req.body.password, user.password)
+        const match = bcrypt.compare(req.body.password, user.password)
 
         if (!match) {
             return res.status(401).json("Wrong credentials!")
@@ -50,8 +49,7 @@ const AdminLogin = async (req, res) => {
 
     }
     catch (err) {
-        throw new Error(err)
-    }
+        return res.status(500).json(err.message)    }
 }
 
 
@@ -76,8 +74,7 @@ const Login = async (req, res) => {
 
     }
     catch (err) {
-        throw new Error(err)
-    }
+        return res.status(500).json(err.message)    }
 }
 
 
@@ -89,8 +86,7 @@ const LogoutWithCookies = async (req, res) => {
 
     }
     catch (err) {
-        throw new Error(err)
-    }
+        return res.status(500).json(err.message)    }
 }
 
 
@@ -134,7 +130,7 @@ const Logout = async (req, res) => {
         res.status(200).send("User logged out successfully!");
     } catch (err) {
         // Handle errors
-        throw new Error(err);
+        return res.status(500).json(err.message);
     }
 };
 

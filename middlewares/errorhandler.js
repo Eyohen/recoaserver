@@ -7,7 +7,7 @@ class Middlewares {
     static errorHandler(err, req, res, next) {
         console.error('Error handler');
         console.error(err);
-        console.log(err);
+        //console.log(err);
 
         const customError = {
             // set default

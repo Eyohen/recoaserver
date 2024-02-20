@@ -21,7 +21,7 @@ const CreateUnitType = async (req,res)=>{
           res.status(404).json({ message: "Community not found" });
           return null;
         }
-        console.log(req.body)
+        //console.log(req.body)
         const newUnitType = new UnitType({...req.body, total: req.body.numAvailable})
     
         const savedUnitType = await newUnitType.save()
@@ -34,8 +34,7 @@ const CreateUnitType = async (req,res)=>{
     }
     catch(err){
         
-        throw new Error(err)
-    }
+        return res.status(500).json(err.message)    }
      
 }
 
@@ -50,9 +49,8 @@ const UpdateUnitType = async (req,res)=>{
 
     }
     catch(err){
-        console.log(err.message)
-        throw new Error(err)
-    }
+        //console.log(err.message)
+        return res.status(500).json(err.message)    }
 }
 
 
@@ -71,16 +69,15 @@ const DeleteUnitType = async (req, res) => {
 
         res.status(200).json({ message: "UnitType and its associated reservations have been deleted!" });
     } catch (err) {
-        console.log(err.message)
-        throw new Error(err)
-    }
+        //console.log(err.message)
+        return res.status(500).json(err.message)    }
 };
 
 
 
 //GET UnitType
 const GetUnitType = async (req,res)=>{
-    // console.log(req.params.id)
+    // //console.log(req.params.id)
     try{
         const unitType = await UnitType.findById(req.params.id).populate('community').populate('reservations');
         
@@ -89,8 +86,7 @@ const GetUnitType = async (req,res)=>{
     
     }
     catch(err){
-        throw new Error(err)
-    }
+        return res.status(500).json(err.message)    }
 }
 
 //GET UnitTypes
@@ -105,8 +101,7 @@ const FindUnitType = async (req,res)=>{
         res.status(200).json(unitTypes)
     }
     catch(err){
-        throw new Error(err)
-    }
+        return res.status(500).json(err.message)    }
 }
 
 
