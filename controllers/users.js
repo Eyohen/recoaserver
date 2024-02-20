@@ -66,8 +66,7 @@ const UpdateUser = async (req,res)=>{
 const DeleteUser = async (req,res)=>{
     try{
         await User.findByIdAndDelete(req.params.id)
-        await Apartment.deleteMany({userId:req.params.id})
-        await Comment.deleteMany({userId:req.params.id})
+
         res.status(200).json("User has been deleted!")
 
     }
