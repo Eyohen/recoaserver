@@ -27,9 +27,8 @@ const RegisterTenant = async (req, res) => {
 
     }
     catch (err) {
-        console.log(err)
-        throw new Error(err)
-    }
+        //console.log(err)
+        return res.status(500).json(err.message)    }
 
 }
 
@@ -58,8 +57,7 @@ const LoginTenant = async (req, res) => {
 
     }
     catch (err) {
-        throw new Error(err)
-    }
+        return res.status(500).json(err.message)    }
 }
 
 
@@ -71,14 +69,13 @@ const LoginTenant = async (req, res) => {
 //             const salt = await bcrypt.genSalt(10)
 //             req.body.password = await bcrypt.hashSync(req.body.password,salt)
 //         }
-//         console.log(req.body)
+//         //console.log(req.body)
 //         const updatedUser=await User.findByIdAndUpdate(req.params.id,{$set:req.body},{new:true})
 //         res.status(200).json(updatedUser)
 
 //     }
 //     catch(err){
-//         throw new Error(err)
-//     }
+//         return res.status(500).json(err.message)//     }
 // })
 
 
@@ -92,8 +89,7 @@ const DeleteTenant = async (req, res) => {
 
     }
     catch (err) {
-        throw new Error(err)
-    }
+        return res.status(500).json(err.message)    }
 }
 
 //GET tenantS
@@ -110,7 +106,7 @@ const FindTenant = async (req, res) => {
             .exec();
         res.status(200).json(tenants);
     } catch (err) {
-        throw new Error(err);
+        return res.status(500).json(err.message);
     }
 };
 
@@ -120,7 +116,7 @@ const GetTenant = async (req, res) => {
         const user = await Tenant.findById(req.params.id).select('-password'); // Exclude password field
         res.status(200).json(user);
     } catch (err) {
-        throw new Error(err);
+        return res.status(500).json(err.message);
     }
 };
 

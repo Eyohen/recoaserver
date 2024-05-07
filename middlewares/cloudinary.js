@@ -20,10 +20,10 @@ const uploadtocloudinary = async (fileBuffer, details) => {
             cloudinary.uploader
                 .upload_stream(options, (error, result) => {
                     if (error) {
-                        console.log('error from uploads ::::::::: ', error);
+                        //console.log('error from uploads ::::::::: ', error);
                         reject(error);
                     } else {
-                        console.log('result from upload :::::::: ', result);
+                        //console.log('result from upload :::::::: ', result);
                         resolve({ message: 'success', url: result.secure_url });
                     }
                 })
@@ -32,7 +32,7 @@ const uploadtocloudinary = async (fileBuffer, details) => {
 
         return result;
     } catch (error) {
-        console.log(error);
+        //console.log(error);
         return { message: 'error', error };
     }
 };
@@ -40,10 +40,10 @@ const uploadtocloudinary = async (fileBuffer, details) => {
 const deleteFromCloudinary = async (publicId) => {
     try {
         const result = await cloudinary.uploader.destroy(publicId);
-        console.log(result);
+        //console.log(result);
         return { message: 'success', result };
     } catch (error) {
-        console.log(error);
+        //console.log(error);
         return { message: 'error', error };
     }
 };
@@ -61,7 +61,7 @@ const deleteFromCloudinary = async (publicId) => {
 //         cloudinary.uploader
 //             .upload_stream(options, (error, result) => {
 //                 if (error) {
-//                     console.log(error);
+//                     //console.log(error);
 //                     reject(error);
 //                 }
 //                 resolve({ message: 'success', url: result.secure_url });

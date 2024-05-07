@@ -14,7 +14,7 @@ const Reservation = require('../models/Reservation')
 const CreateCommunity = async (req, res) => {
     try {
 
-        console.log(req.body)
+        //console.log(req.body)
         const submarket = await SubMarket.findById(req.body.submarket)
 
 
@@ -37,7 +37,7 @@ const CreateCommunity = async (req, res) => {
     }
     catch (err) {
 
-        throw new Error({ message: "Community not created" })
+        return res.status(400).json({ message: "Community not created" })
     }
 
 }
@@ -47,15 +47,14 @@ const CreateCommunity = async (req, res) => {
 //UPDATE
 const UpdateCommunity = async (req, res) => {
     try {
-
+        console.log(req.body)
         const updatedCommunity = await Community.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true })
         res.status(200).json(updatedCommunity)
 
     }
     catch (err) {
         console.log(err.message)
-        throw new Error(err)
-    }
+        return res.status(500).json(err.message)    }
 }
 
 
@@ -69,18 +68,17 @@ const DeleteCommunity = async (req, res) => {
 
     }
     catch (err) {
-        throw new Error(err)
-    }
+        return res.status(500).json(err.message)    }
 }
 
 
 //GET Community
 const GetCommunity = async (req, res) => {
-    // console.log(req.params.id)
+    // //console.log(req.params.id)
     try {
         const foundCommunity = await Community.findById(req.params.id).populate('submarket').populate('unitTypes')
-        console.log(foundCommunity)
-        // console.log(Community)
+        //console.log(foundCommunity)
+        // //console.log(Community)
         if (!Community) {
             res.status(404).json("Community not found!")
         }
@@ -90,9 +88,8 @@ const GetCommunity = async (req, res) => {
 
     }
     catch (err) {
-        console.log(err)
-        throw new Error(err)
-    }
+        //console.log(err)
+        return res.status(500).json(err.message)    }
 }
 
 //GET Communitys
@@ -124,9 +121,8 @@ const SearchCommunity = async (req, res) => {
         res.status(200).json(Communitys)
     }
     catch (err) {
-        console.log(err)
-        throw new Error(err)
-    }
+        //console.log(err)
+        return res.status(500).json(err.message)    }
 }
 
 //GET USER POSTS
@@ -136,8 +132,7 @@ const GetUserCommunity = async (req, res) => {
         res.status(200).json(Communitys)
     }
     catch (err) {
-        throw new Error(err)
-    }
+        return res.status(500).json(err.message)    }
 }
 
 const getTenantReservedCommunities = async (req, res) => {
@@ -156,8 +151,7 @@ const getTenantReservedCommunities = async (req, res) => {
         // Return the communities
         res.json(communities);
     } catch (error) {
-        throw new Error(error)
-    }
+        return res.status(500).json(error.message)    }
 }
 
 

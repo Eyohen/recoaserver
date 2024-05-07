@@ -17,7 +17,7 @@ const CreateWaitlist = async (req, res) => {
     try {
         let user = await User.findOne({ email });
         const userPassword = tenantId ? (await Tenant.findById(tenantId)).password : null;
-        console.log(userPassword)
+        //console.log(userPassword)
         // If user does not exist, create the user
         if (!user) {
             let userFields = {
@@ -27,7 +27,7 @@ const CreateWaitlist = async (req, res) => {
                 ...( userPassword ? {password : userPassword} : {}), 
                 ...(tenantId ? { tenant: tenantId } : {}),
             };
-            console.log(userFields)
+            //console.log(userFields)
             user = new User(userFields);
             await user.save();
 
@@ -70,8 +70,7 @@ const UpdateWaitlist = async (req,res)=>{
 
     }
     catch(err){
-        throw new Error(err)
-    }
+        return res.status(500).json(err.message)    }
 }
 
 
@@ -84,8 +83,7 @@ const DeleteWaitlist = async (req,res)=>{
 
     }
     catch(err){
-        throw new Error(err)
-    }
+        return res.status(500).json(err.message)    }
 }
 
 
@@ -97,8 +95,7 @@ const GetWaitlist = async (req,res)=>{
        
     }
     catch(err){
-        throw new Error(err)
-    }
+        return res.status(500).json(err.message)    }
 }
 
 //GET Estates
@@ -113,8 +110,7 @@ const SearchWaitlists = async (req,res)=>{
         res.status(200).json(booking)
     }
     catch(err){
-        throw new Error(err)
-    }
+        return res.status(500).json(err.message)    }
 }
 
 //GET USER POSTS
@@ -124,8 +120,7 @@ const GetUserWaitlist = async (req,res)=>{
         res.status(200).json(booking)
     }
     catch(err){
-        throw new Error(err)
-    }
+        return res.status(500).json(err.message)    }
 }
 
 const GetWaitlistStats = async (req, res) => {
@@ -137,8 +132,7 @@ const GetWaitlistStats = async (req, res) => {
             totalWithoutTenant
         });
     } catch (error) {
-        throw new Error(err)
-    }
+        return res.status(500).json(err.message)    }
 }
 
 

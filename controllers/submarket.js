@@ -11,14 +11,14 @@ const verifyToken = require('../middlewares/verifyToken')
 const CreateSubmarket = async (req,res)=>{
     try{
         const newSubMarket =new SubMarket(req.body)
-        // console.log(req.body)
+        // //console.log(req.body)
         const savedSubMarket = await newSubMarket.save()
         
         res.status(200).json(savedSubMarket)
     }
     catch(err){
-        console.log(err.message)
-        throw new Error({message:"Submarket not created"})
+        //console.log(err.message)
+        return res.status(400).json({message:"Submarket not created"})
     }
      
 }
@@ -32,8 +32,7 @@ const UpdateSubmarket = async (req,res)=>{
 
     }
     catch(err){
-        throw new Error(err)
-    }
+        return res.status(500).json(err.message)    }
 }
 
 
@@ -46,8 +45,7 @@ const DeleteSubmarket = async (req,res)=>{
 
     }
     catch(err){
-        throw new Error(err)
-    }
+        return res.status(500).json(err.message)    }
 }
 
 
@@ -59,14 +57,13 @@ const GetSubmarketDetails = async (req,res)=>{
        
     }
     catch(err){
-        throw new Error(err)
-    }
+        return res.status(500).json(err.message)    }
 }
 
 //GET SubMarkets
 const SearchSubmarket = async (req,res)=>{
     const query=req.query
-    console.log("endpointhit")
+    //console.log("endpointhit")
     
     try{
         const searchFilter={
@@ -76,8 +73,7 @@ const SearchSubmarket = async (req,res)=>{
         res.status(200).json(subMarket)
     }
     catch(err){
-        throw new Error(err)
-    }
+        return res.status(500).json(err.message)    }
 }
 
 //GET USER POSTS
@@ -87,8 +83,7 @@ const GetUserSubmarket = async (req,res)=>{
         res.status(200).json(subMarket)
     }
     catch(err){
-        throw new Error(err)
-    }
+        return res.status(500).json(err.message)    }
 }
 
 

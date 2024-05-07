@@ -1,39 +1,48 @@
 const mongoose = require('mongoose')
-const Reservation = require('./Reservation');
+const UnitType = require('./UnitType');
 
-const UserReservationSchema = new mongoose.Schema({
+const ReservationSchema = new mongoose.Schema({
 
-    reservation: {
+    unitType: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Reservation'
+        ref: 'UnitType'
     },
-    user: {
+    tenant: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'Tenant'
     },
     count: {
         type: Number,
         required: false
-    }
+    },
+    numAvailable: {
+        type: Number,
+        required: false,
+    },
+    userreservations: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'UserReservation',
+        required: false
+    }],
 
 }, { timestamps: true })
 
 // Middleware function to check if the unit is still available and the count being reserved is enough
-const checkAvailability = async (userreservation) => {
+const checkAvailability = async (reservation) => {
     try {
         // Find the unit type associated with the reservation
-        const reservation = await Reservation.findById(userreservation.reservation);
-        if (!reservation) {
-            return new Error('Reservation not found');
+        const unitType = await UnitType.findById(reservation.unitType);
+        if (!unitType) {
+            return new Error('Unit type not found');
         }
 
         // Check if there are available units
-        if (reservation.numAvailable <= 0) {
+        if (unitType.numAvailable <= 0) {
             return new Error('No available units for reservation');
         }
 
         // Check if the count being reserved is enough
-        if (userreservation.count > reservation.numAvailable) {
+        if (reservation.count > unitType.numAvailable) {
             return new Error('Insufficient available units for reservation');
         }
 
@@ -43,7 +52,7 @@ const checkAvailability = async (userreservation) => {
 };
 
 // Pre-save hook to check availability before saving a reservation
-UserReservationSchema.pre('save', async function (next) {
+ReservationSchema.pre('save', async function (next) {
     try {
         await checkAvailability(this);
         next();
@@ -52,4 +61,4 @@ UserReservationSchema.pre('save', async function (next) {
     }
 });
 
-module.exports = mongoose.model("UserReservation", UserReservationSchema)
+module.exports = mongoose.model("Reservation", ReservationSchema)

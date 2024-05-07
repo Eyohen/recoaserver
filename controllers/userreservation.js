@@ -8,8 +8,7 @@ const User = require('../models/User');
 const unewReservation = async (req, res) => {
     try {
         const { reservationId, userId, count } = req.body;
-        console.log(req.body);
-        // Update numAvailable in Reservation model
+        const Icount = parseInt(count);
         const reservation = await Reservation.findById(reservationId);
         if (!reservation) {
             res.status(404).json({ error: 'Reservation not found' });
@@ -19,57 +18,66 @@ const unewReservation = async (req, res) => {
         if (!user) {
             res.status(404).json({ error: 'User not found' });
         }
-        // First, try to find an existing reservation for this user and reservationId
         let userreservation = await UserReservation.findOne({
             reservation: reservationId,
             user: userId
         });
 
         if (userreservation) {
-            // If an existing reservation is found, increment the count and numAvailable
-            userreservation.count += count;
-            userreservation.numAvailable += count; // Adjust this logic if numAvailable is meant to behave differently
-            await userreservation.save();
+            const reservationId = userreservation._id;
+            console.log('reservationId', reservationId);
+            const newcount = userreservation.count + Icount;
+            const newNumberAvailable = userreservation.numAvailable + Icount;
+            await UserReservation.findByIdAndUpdate(
+                reservationId,
+                {
+                    count: newcount,
+                    numAvailable: newNumberAvailable
+                },
+                { new: true }
+            );
         } else {
             // If no existing reservation is found, create a new one
-            userreservation = new UserReservation({
+            const newuserreservation = new UserReservation({
                 reservation: reservationId,
                 user: userId,
-                count: count,
-                numAvailable: count
+                count: Icount,
+                numAvailable: Icount
             });
-            await userreservation.save();
-            reservation.userreservations.push(reservation._id); // Add reservation to the reservations array
+            const saved = await newuserreservation.save();
+            reservation.userreservations.push(saved._id); // Add reservation to the reservations 
+            userreservation = saved;
+            user.reservations.push(reservation._id); // Add reservation to the reservations array
+            await user.save();
         }
 
-        reservation.numAvailable -= count; // Reduce available units by count
+        reservation.numAvailable -= Icount; // Reduce available units by count
         await reservation.save();
 
-        user.reservations.push(reservation._id); // Add reservation to the reservations array
-        await user.save();
 
         res.status(201).json({ message: 'Reservation created successfully', userreservation });
     } catch (error) {
-        throw new Error(error)
-    }
+        console.log(error)
+        return res.status(500).json(error.message)    }
 };
 
 // Get All reservation
 const ugetReservations = async (req, res) => {
     const query = req.query;
-    console.log('here are the reservations');
+    //console.log('here are the reservations');
     try {
         const searchFilter = {
             title: { $regex: query.search, $options: "i" }
         };
         const reservations = await UserReservation.find(query.search ? searchFilter : null)
-            .populate('reservation')
-            .populate('user');
-        console.log(reservations);
+            .populate({
+                path: 'reservation',
+                populate: { path: 'tenant unitType' }
+            })            .populate('user');
+        //console.log(reservations);
         res.status(200).json(reservations);
     } catch (error) {
-        throw new Error(error)
-    }
+        return res.status(500).json(error.message)    }
 };
 
 
@@ -82,11 +90,10 @@ const ugetreservation = async (req, res) => {
                 .populate('reservation')
                 .populate('user');
         }
-        console.log(reservation);
+        //console.log(reservation);
         res.status(200).json(reservation);
     } catch (error) {
-        throw new Error(error)
-    }
+        return res.status(500).json(error.message)    }
 };
 
 // Update a Reservation
@@ -95,6 +102,7 @@ const uupdateReservation = async (req, res) => {
         const { count: newCount } = req.body;
         const reservationId = req.params.id;
 
+        const Icount = parseInt(newCount);
         // Find current reservation
         const currentReservation = await UserReservation.findById(reservationId);
         if (!currentReservation) {
@@ -102,7 +110,7 @@ const uupdateReservation = async (req, res) => {
         }
 
         // Calculate count difference
-        const countDifference = newCount - currentReservation.count;
+        const countDifference = Icount - currentReservation.count;
 
         // Update reservation
         const updatedReservation = await UserReservation.findByIdAndUpdate(
@@ -117,7 +125,7 @@ const uupdateReservation = async (req, res) => {
         // Update numAvailable in Reservation model
         const reservation = await Reservation.findById(updatedReservation.reservation);
         if (!reservation) {
-            throw new Error('Unit type not found');
+            return res.status(400).json('Unit type not found');
         }
 
         // Adjust numAvailable based on count difference
@@ -127,8 +135,7 @@ const uupdateReservation = async (req, res) => {
 
         res.status(200).json(updatedReservation);
     } catch (error) {
-        throw new Error(error)
-    }
+        return res.status(500).json(error.message)    }
 };
 
 const udeleteReservation = async (req, res) => {
@@ -144,21 +151,20 @@ const udeleteReservation = async (req, res) => {
         // Update numAvailable in Reservation model
         const reservation = await Reservation.findById(userreservation.reservation);
         if (!reservation) {
-            throw new Error('Unit type not found');
+            return res.status(400).json('Unit type not found');
         }
 
-        console.log(reservation);
+        //console.log(reservation);
         reservation.numAvailable += reservation.count; // Increase numAvailable by reservation count
         await reservation.save();
 
         // Delete reservation
-        await Reservation.deleteOne({ _id: reservationId });
+        await UserReservation.deleteOne({ _id: reservationId });
 
         res.status(200).json({ message: 'Reservation deleted successfully' });
     } catch (error) {
         console.error(error);
-        throw new Error(error)
-    }
+        return res.status(500).json(error.message)    }
 };
 
 

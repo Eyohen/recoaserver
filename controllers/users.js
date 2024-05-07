@@ -12,6 +12,11 @@ const RegisterUser = async (req, res) => {
         const { firstName, lastName, email, password, phone, tenantId } = req.body
         const tenant = await Tenant.findById(tenantId)
 
+        const checkEmail = await User.findOne({ email })
+        if (checkEmail) {
+            return res.status(400).json("Email already exists!")
+        }
+
         if (!tenant) {
             return res.status(404).json("Tenant not found!")
         }
@@ -22,9 +27,14 @@ const RegisterUser = async (req, res) => {
         }
         const newUser = new User({
             firstName, lastName, email, password: tenant.password, phone,
-            role: 'tenant'
+            role: 'tenant',
+            tenant: tenantId
         })
         const savedUser = await newUser.save()
+
+        // add the user to the tenant
+        tenant.users.push(savedUser._id)
+        await tenant.save()
         // Exclude password from the response
         const { password: removedPassword, ...userWithoutPassword } = savedUser._doc;
         res.status(200).json(userWithoutPassword);
@@ -32,8 +42,7 @@ const RegisterUser = async (req, res) => {
     }
     catch (err) {
         console.log(err)
-        throw new Error(err)
-    }
+        return res.status(500).json(err.message)    }
 
 }
 //UPDATE
@@ -43,14 +52,13 @@ const UpdateUser = async (req,res)=>{
             const salt = await bcrypt.genSalt(10)
             req.body.password = await bcrypt.hashSync(req.body.password,salt)
         }
-        console.log(req.body)
+        //console.log(req.body)
         const updatedUser=await User.findByIdAndUpdate(req.params.id,{$set:req.body},{new:true})
         res.status(200).json(updatedUser)
 
     }
     catch(err){
-        throw new Error(err)
-    }
+        return res.status(500).json(err.message)    }
 }
 
 
@@ -58,14 +66,12 @@ const UpdateUser = async (req,res)=>{
 const DeleteUser = async (req,res)=>{
     try{
         await User.findByIdAndDelete(req.params.id)
-        await Apartment.deleteMany({userId:req.params.id})
-        await Comment.deleteMany({userId:req.params.id})
+
         res.status(200).json("User has been deleted!")
 
     }
     catch(err){
-        throw new Error(err)
-    }
+        return res.status(500).json(err.message)    }
 }
 
 //GET USERS
@@ -77,11 +83,11 @@ const SearchUsers = async (req,res)=>{
             title:{$regex:query.search, $options:"i"}
         }
         const users = await User.find(query.search?searchFilter:null)
+        .populate('tenant')
         res.status(200).json(users)
     }
     catch(err){
-        throw new Error(err)
-    }
+        return res.status(500).json(err.message)    }
 }
 
 
@@ -93,8 +99,7 @@ const GetUser = async (req,res)=>{
         res.status(200).json(info)
     }
     catch(err){
-        throw new Error(err)
-    }
+        return res.status(500).json(err.message)    }
 }
 
 

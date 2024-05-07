@@ -37,7 +37,7 @@ router.delete('/:id', verifyToken, deleteReservation);
 router.post('/user/create', verifyToken, unewReservation);
 
 // Get All 
-router.get('/user/', ugetReservations);
+router.get('/user/all', ugetReservations);
 
 // Get a Reservation by ID
 router.get('/user/:id', ugetreservation);
